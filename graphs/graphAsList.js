@@ -19,12 +19,12 @@ export function buildAdjList(edges, numberOfNodes){
 }
 
 
-// graph usig class
+// graph as list using class
 
 
- export class Graph {
+export class Graph {
     constructor() {
-        this.adjacencyList = new Map(); // Stores vertices and their connected neighbors
+        this.adjacencyList = new Map();
     }
 
     addVertex(vertex) {
@@ -34,29 +34,33 @@ export function buildAdjList(edges, numberOfNodes){
     }
 
     addEdge(vertex1, vertex2) {
-        // Add edge for an undirected graph (connection in both directions)
         if (this.adjacencyList.has(vertex1) && this.adjacencyList.has(vertex2)) {
             this.adjacencyList.get(vertex1).push(vertex2);
-            this.adjacencyList.get(vertex2).push(vertex1);
         }
     }
 
-    removeEdge(vertex1, vertex2) {
-        // Remove edge for an undirected graph
-        if (this.adjacencyList.has(vertex1) && this.adjacencyList.has(vertex2)) {
-            this.adjacencyList.set(vertex1, this.adjacencyList.get(vertex1).filter(v => v !== vertex2));
-            this.adjacencyList.set(vertex2, this.adjacencyList.get(vertex2).filter(v => v !== vertex1));
+    removeEdge(source, destination) {
+        if (this.adjacencyList.has(source)) {
+            this.adjacencyList.set(
+                source, 
+                this.adjacencyList.get(source).filter(v => v !== destination)
+            );
         }
     }
 
-    removeVertex(vertex) {
-        if (this.adjacencyList.has(vertex)) {
-            // Remove all edges connected to this vertex
-            while (this.adjacencyList.get(vertex).length) {
-                const adjacentVertex = this.adjacencyList.get(vertex).pop();
-                this.removeEdge(vertex, adjacentVertex);
+    removeVertex(vertexToRemove) { 
+        if (this.adjacencyList.has(vertexToRemove)) {
+            this.adjacencyList.delete(vertexToRemove); 
+
+            
+            for (let [vertex, neighbors] of this.adjacencyList) {
+                if (neighbors.includes(vertexToRemove)) {
+                    this.adjacencyList.set(
+                        vertex, 
+                        neighbors.filter(v => v !== vertexToRemove)
+                    );
+                }
             }
-            this.adjacencyList.delete(vertex); // Remove the vertex itself
         }
     }
 }
